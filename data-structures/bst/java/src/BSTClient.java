@@ -6,10 +6,9 @@ public class BSTClient {
         tree.insert(1);
         tree.insert(3);
         tree.insert(5);
-        tree.traverse();
-
-        System.out.println();
-        tree.delete(4);
-        tree.traverse();
+        
+        for (int i: tree) {
+            System.out.print(i + " ");
+        }
     }
 }

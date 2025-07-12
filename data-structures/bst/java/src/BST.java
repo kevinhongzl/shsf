@@ -1,98 +1,67 @@
-public class BST<K extends Comparable<K>>{
-    public K key;
-    public BST<K> left;
-    public BST<K> right;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
+import java.util.Stack;
+
+public class BST<K extends Comparable<K>> implements Iterable<K> {
+    public final BSTNode<K> root;
+    public int size;
 
     public BST() {
-        this.set(null, null, null);
+        root = new BSTNode<>();
+        size = 0;
     }
 
-    private void set(K key, BST<K> left, BST<K> right) {
-        this.key = key;
-        this.left = left;
-        this.right = right;
+    public void insert(K item) {
+        root.insert(item);
+        size += 1;
     }
 
-    private void set(BST<K> other) {
-        this.set(other.key, other.left, other.right);
+    public int size() {
+        return size;
     }
 
-    public void insert(K key) {
-        if (this.key == null) {
-            this.set(key, new BST<>(), new BST<>());
-            return;
-        }
-        if (key.compareTo(this.key) <= 0) {
-            this.left.insert(key);
-        } else {
-            this.right.insert(key);
-        }
+    public boolean contains(K item) {
+        return root.contains(item);
     }
 
-    public void traverse() {
-        if (key == null) {
-            return;
-        }
-        System.out.print(key);
-        System.out.print(" ");
-        left.traverse();
-        right.traverse();
+    public K delete(K item) {
+        K itemDeleted = root.delete(item);
+        size -= itemDeleted != null? 1 : 0;
+        return itemDeleted;
     }
 
-    public Boolean contains(K key) {
-        BST<K> result = this.find(key);
-        return result != null;
+    public Iterator<K> iterator() {
+        return new BSTIterator();
     }
 
-    public BST<K> find(K key) {
-        if (this.key == null) {
-            return null;
-        }
-        if (key.compareTo(this.key) == 0) {
-            return this;
-        } else if (key.compareTo(this.key) < 0) {
-            return left.find(key);
-        } else {
-            return right.find(key);
-        }
-    }
+    private class BSTIterator implements Iterator<K> {
+        Stack<BSTNode<K>> stack;
 
-    public Boolean delete(K key) {
-        BST<K> target = this.find(key);
-        if (target == null) {
-            return false;
-        }
-
-        // No children
-        if (target.left.key == null && target.right.key == null) {
-            target.set(null, new BST<>(), new BST<>());
-            return true;
-        }
-
-        // One child
-        if (target.left.key == null) {
-            target.set(target.right);
-            return true;
-        }
-        if (target.right.key == null) {
-            target.set(target.left);
-            return true;
-        }
-
-        // Two children
-        if (target.left.right.key == null){
-            target.key = target.left.key;
-            target.left = target.left.left;
-        } else {
-            BST<K> parent = target.left;
-            BST<K> rightmost = target.left.right;
-            while (rightmost.right.key != null) {
-                parent = rightmost;
-                rightmost = rightmost.right;
+        public BSTIterator() {
+            stack = new Stack<>();
+            BSTNode<K> curr = root;
+            while (curr.item != null) {
+                stack.push(curr);
+                curr = curr.left;
             }
-            parent.right = rightmost.left;
-            target.key = rightmost.key;
         }
-        return true;
+
+        public boolean hasNext(){
+            return !stack.isEmpty();
+        }
+
+        public K next() {
+            if (!hasNext()) {
+                throw new NoSuchElementException();
+            }
+
+            BSTNode<K> output = stack.pop();
+            BSTNode<K> curr = output.right;
+            while (curr.item != null) {
+                stack.push(curr);
+                curr = curr.left;
+            }
+            return output.item;
+        }
     }
 }
