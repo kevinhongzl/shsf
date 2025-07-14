@@ -1,35 +1,38 @@
+import javax.annotation.Nonnull;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Stack;
 
 public class BST<K extends Comparable<K>> implements Iterable<K> {
-    public final BSTNode<K> root;
-    public int size;
+    public final BSTNode<K> root = new BSTNode<>();
+    public int size = 0;
 
-    public BST() {
-        root = new BSTNode<>();
-        size = 0;
-    }
-
-    public void insert(K item) {
+    public void put(K item) {
         root.insert(item);
         size += 1;
     }
 
-    public int size() {
-        return size;
+    public K get(K item) {
+        BSTNode<K> nodeFound = root.find(item);
+        return nodeFound != null ? nodeFound.item : null;
     }
 
     public boolean contains(K item) {
         return root.contains(item);
     }
 
-    public K delete(K item) {
+    public int size() {
+        return size;
+    }
+
+    public K remove(K item) {
         K itemDeleted = root.delete(item);
         size -= itemDeleted != null? 1 : 0;
         return itemDeleted;
     }
 
+    @Override
+    @Nonnull
     public Iterator<K> iterator() {
         return new BSTIterator();
     }
