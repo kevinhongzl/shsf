@@ -15,23 +15,17 @@ impl BSTNode {
     }
 
     fn insert(&mut self, value: i32) {
-        if value <= self.value {
-            match &mut self.left {
-                None => {
-                    self.left = Some(Box::new(BSTNode::new(value)));
-                }
-                Some(node) => {
-                    node.insert(value);
-                }
-            }
+        let branch = if value <= self.value {
+            &mut self.left
         } else {
-            match &mut self.right {
-                None => {
-                    self.right = Some(Box::new(BSTNode::new(value)));
-                }
-                Some(node) => {
-                    node.insert(value);
-                }
+            &mut self.right
+        };
+        match branch {
+            None => {
+                *branch = Some(Box::new(BSTNode::new(value)));
+            }
+            Some(node) => {
+                node.insert(value);
             }
         }
     }
