@@ -16,18 +16,22 @@ impl BSTNode {
 
     fn insert(&mut self, value: i32) {
         if value <= self.value {
-            if self.left.is_none() {
-                (*self).left = Some(Box::new(BSTNode::new(value)));
-            } else {
-                let node = self.left.as_mut().unwrap();
-                node.insert(value);
+            match &mut self.left {
+                None => {
+                    self.left = Some(Box::new(BSTNode::new(value)));
+                }
+                Some(node) => {
+                    node.insert(value);
+                }
             }
         } else {
-            if self.right.is_none() {
-                (*self).right = Some(Box::new(BSTNode::new(value)));
-            } else {
-                let node = self.right.as_mut().unwrap();
-                node.insert(value);
+            match &mut self.right {
+                None => {
+                    self.right = Some(Box::new(BSTNode::new(value)));
+                }
+                Some(node) => {
+                    node.insert(value);
+                }
             }
         }
     }
