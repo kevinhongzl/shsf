@@ -30,6 +30,22 @@ impl BSTNode {
         }
     }
 
+    fn contain(&self, value: i32) -> bool {
+        if self.value == value {
+            true
+        } else if self.value > value {
+            match &self.left {
+                None => false,
+                Some(node) => node.contain(value)
+            }
+        } else {
+             match &self.right {
+                None => false,
+                Some(node) => node.contain(value)
+            }
+        }
+    }
+
     fn preorder(&self) {
         print!("{} ", self.value);
         self.left.as_ref().map(|node| {
@@ -42,12 +58,14 @@ impl BSTNode {
 }
 
 fn main() {
-    let mut node = BSTNode::new(4);
-    node.insert(2);
-    node.insert(1);
-    node.insert(3);
-    node.insert(5);
-    node.insert(6);
-    node.insert(7);
-    node.preorder();
+    let mut tree = BSTNode::new(4);
+    tree.insert(2);
+    tree.insert(1);
+    tree.insert(3);
+    tree.insert(5);
+    tree.insert(6);
+    tree.insert(7);
+    tree.preorder();
+    println!("\nTree contains 1 : {}", tree.contain(1));
+    println!("Tree contains 0 : {}", tree.contain(0));
 }
