@@ -32,17 +32,17 @@ impl BSTNode {
         }
     }
 
-    fn contain(&self, value: i32) -> bool {
+    fn find(&self, value: i32) -> bool {
         match value.cmp(&self.value) {
             Ordering::Equal => true,
             Ordering::Less => self
                 .left
                 .as_ref()
-                .map_or(false, |branch| branch.contain(value)),
+                .map_or(false, |branch| branch.find(value)),
             Ordering::Greater => self
                 .right
                 .as_ref()
-                .map_or(false, |branch| branch.contain(value)),
+                .map_or(false, |branch| branch.find(value)),
         }
     }
 
@@ -66,6 +66,6 @@ fn main() {
     tree.insert(6);
     tree.insert(7);
     tree.preorder();
-    println!("\nTree contains 1 : {}", tree.contain(1));
-    println!("Tree contains 0 : {}", tree.contain(0));
+    println!("\nTree contains 1 : {}", tree.find(1));
+    println!("Tree contains 0 : {}", tree.find(0));
 }
