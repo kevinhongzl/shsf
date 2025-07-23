@@ -1,3 +1,5 @@
+use std::cmp::Ordering;
+
 #[derive(Debug)]
 struct BSTNode {
     value: i32,
@@ -31,18 +33,16 @@ impl BSTNode {
     }
 
     fn contain(&self, value: i32) -> bool {
-        if self.value == value {
-            true
-        } else if self.value > value {
-            match &self.left {
-                None => false,
-                Some(node) => node.contain(value)
-            }
-        } else {
-             match &self.right {
-                None => false,
-                Some(node) => node.contain(value)
-            }
+        match value.cmp(&self.value) {
+            Ordering::Equal => true,
+            Ordering::Less => self
+                .left
+                .as_ref()
+                .map_or(false, |branch| branch.contain(value)),
+            Ordering::Greater => self
+                .right
+                .as_ref()
+                .map_or(false, |branch| branch.contain(value)),
         }
     }
 
