@@ -1,4 +1,4 @@
-public class BSTNode<K extends Comparable<K>>{
+public class BSTNode<K extends Comparable<K>> {
     public K item;
     public BSTNode<K> left;
     public BSTNode<K> right;
@@ -17,75 +17,45 @@ public class BSTNode<K extends Comparable<K>>{
         this.set(other.item, other.left, other.right);
     }
 
-    public void insert(K item) {
+    public BSTNode<K> insert(K item) {
         if (this.item == null) {
             this.set(item, new BSTNode<>(), new BSTNode<>());
-            return;
+            return this;
         }
-        if (item.compareTo(this.item) <= 0) {
-            this.left.insert(item);
-        } else {
-            this.right.insert(item);
-        }
-    }
-
-    public boolean contains(K item) {
-        BSTNode<K> result = this.find(item);
-        return result.item != null;
+        if (item.compareTo(this.item) <= 0) return this.left.insert(item);
+        else return this.right.insert(item);
     }
 
     public BSTNode<K> find(K item) {
-        if (this.item == null) {
-            return this;
-        }
-        if (item.compareTo(this.item) == 0) {
-            return this;
-        } else if (item.compareTo(this.item) < 0) {
-            return left.find(item);
-        } else {
-            return right.find(item);
-        }
+        if (this.item == null || item.compareTo(this.item) == 0) return this;
+        else if (item.compareTo(this.item) < 0) return left.find(item);
+        else return right.find(item);
     }
 
-    public K delete(K item) {
-        K itemDeleted;
+    public BSTNode<K> delete(K item) {
         BSTNode<K> target = this.find(item);
-        if (target.item == null) {
-            return null;
-        } else {
-            itemDeleted = target.item;
-        }
+        BSTNode<K> output = new BSTNode<>();
+        output.set(target);
 
-        // No children
-        if (target.left.item == null && target.right.item == null) {
-            target.set(null, new BSTNode<>(), new BSTNode<>());
-            return itemDeleted;
+        if (target.item == null) return null; // Item not found
+        else if (target.left.item == null) target.set(target.right); // No children || One child (right)
+        else if (target.right.item == null) target.set(target.left);  // One child (left)
+        else {
+            // Two children
+            BSTNode<K> iop = target.left.deleteMax();
+            target.item = iop.item;
         }
+        return output;
+    }
 
-        // One child
-        if (target.left.item == null) {
-            target.set(target.right);
-            return itemDeleted;
+    public BSTNode<K> deleteMax() {
+        if (this.item == null) return null;
+        if (this.right.item == null) {
+            BSTNode<K> output = new BSTNode<>();
+            output.set(this);
+            this.set(this.left);
+            return output;
         }
-        if (target.right.item == null) {
-            target.set(target.left);
-            return itemDeleted;
-        }
-
-        // Two children
-        if (target.left.right.item == null){
-            target.item = target.left.item;
-            target.left = target.left.left;
-        } else {
-            BSTNode<K> parent = target.left;
-            BSTNode<K> rightmost = target.left.right;
-            while (rightmost.right.item != null) {
-                parent = rightmost;
-                rightmost = rightmost.right;
-            }
-            parent.right = rightmost.left;
-            target.item = rightmost.item;
-        }
-        return itemDeleted;
+        return this.right.deleteMax();
     }
 }
