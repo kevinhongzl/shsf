@@ -18,7 +18,7 @@ public class BST<K extends Comparable<K>> implements Iterable<K> {
     }
 
     public boolean contains(K item) {
-        return root.contains(item);
+        return root.find(item).item != null;
     }
 
     public int size() {
@@ -26,9 +26,13 @@ public class BST<K extends Comparable<K>> implements Iterable<K> {
     }
 
     public K remove(K item) {
-        K itemDeleted = root.delete(item);
-        size -= itemDeleted != null? 1 : 0;
-        return itemDeleted;
+        BSTNode<K> nodeDeleted = root.delete(item);
+        if (nodeDeleted == null){
+            return null;
+        } else {
+            size -= 1;
+            return nodeDeleted.item;
+        }
     }
 
     @Override
