@@ -1,3 +1,5 @@
+use std::cmp::Ordering;
+
 #[derive(Debug)]
 struct BSTNode {
     key: i32,
@@ -28,12 +30,14 @@ impl BSTNode {
         }
     }
 
-    fn find(node: &Option<Box<BSTNode>>, key: i32) -> bool {
-        match node {
-            None => false,
-            Some(n) if n.key == key => true,
-            Some(n) if n.key > key => BSTNode::find(&n.left, key),
-            Some(n) => BSTNode::find(&n.right, key),
+    fn find(node: &mut Option<Box<BSTNode>>, key: i32) -> &mut Option<Box<BSTNode>> {
+        if node.is_none() {
+            return node;
+        }
+        match node.as_mut().unwrap().key.cmp(&key) {
+            Ordering::Equal => node,
+            Ordering::Greater => BSTNode::find(&mut node.as_mut().unwrap().left, key),
+            Ordering::Less => BSTNode::find(&mut node.as_mut().unwrap().right, key),
         }
     }
 }
@@ -56,8 +60,11 @@ impl BST {
         self.size += 1;
     }
 
-    fn find(&self, key: i32) -> bool {
-        BSTNode::find(&self.root, key)
+    fn find(&mut self, key: i32) -> bool {
+        match BSTNode::find(&mut self.root, key) {
+            None => false,
+            Some(_) => true,
+        }
     }
 }
 
